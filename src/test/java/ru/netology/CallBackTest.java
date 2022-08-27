@@ -1,5 +1,6 @@
 package ru.netology;
 
+import com.codeborne.selenide.Condition;
 import org.junit.jupiter.api.BeforeEach;
 import com.codeborne.selenide.SelenideElement;
 import org.junit.jupiter.api.Test;
@@ -8,6 +9,8 @@ import org.openqa.selenium.Keys;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.Duration;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -16,15 +19,11 @@ import static com.codeborne.selenide.Condition.visible;
 import static com.codeborne.selenide.Selenide.*;
 
 public class CallBackTest {
-    private String meetingDate() {
-        DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
-        Date date = new Date();
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(date);
-        calendar.add(Calendar.DATE,4);
-        date = calendar.getTime();
-        return dateFormat.format(date);
+
+    public String generateDate(int days) {
+        return LocalDate.now().plusDays(days).format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
     }
+    String planningDate = generateDate(4);
     @BeforeEach
     void openApplication(){
         open("http://localhost:9999/");
@@ -35,12 +34,14 @@ public class CallBackTest {
         form.$("[data-test-id=city] input").setValue("Калуга");
         form.$("[data-test-id=date] input").sendKeys(Keys.CONTROL + "a");
         form.$("[data-test-id=date] input").sendKeys(Keys.BACK_SPACE);
-        form.$("[data-test-id=date] input").setValue(meetingDate());
+        form.$("[data-test-id=date] input").setValue(planningDate);
         form.$("[data-test-id=name] input").setValue("Иван Иванов");
         form.$("[data-test-id=phone] input").setValue("+79991234567");
         form.$("[data-test-id=agreement]").click();
         $$("button").find(exactText("Забронировать")).click();
-        $("[data-test-id=notification] .notification__title").shouldBe(visible,Duration.ofSeconds(15));
+        $(".notification__content")
+                .shouldHave(Condition.text("Встреча успешно забронирована на " + planningDate), Duration.ofSeconds(15))
+                .shouldBe(Condition.visible);
         $("[data-test-id=notification] .notification__title").shouldHave(exactText("Успешно!"));
     }
     @Test
@@ -49,12 +50,14 @@ public class CallBackTest {
         form.$("[data-test-id=city] input").setValue("Калуга");
         form.$("[data-test-id=date] input").sendKeys(Keys.CONTROL + "a");
         form.$("[data-test-id=date] input").sendKeys(Keys.BACK_SPACE);
-        form.$("[data-test-id=date] input").setValue(meetingDate());
+        form.$("[data-test-id=date] input").setValue(planningDate);
         form.$("[data-test-id=name] input").setValue("Иван Иванов-Сидоров");
         form.$("[data-test-id=phone] input").setValue("+79991234567");
         form.$("[data-test-id=agreement]").click();
         $$("button").find(exactText("Забронировать")).click();
-        $("[data-test-id=notification] .notification__title").shouldBe(visible,Duration.ofSeconds(15));
+        $(".notification__content")
+                .shouldHave(Condition.text("Встреча успешно забронирована на " + planningDate), Duration.ofSeconds(15))
+                .shouldBe(Condition.visible);
         $("[data-test-id=notification] .notification__title").shouldHave(exactText("Успешно!"));
     }
     @Test
@@ -63,7 +66,7 @@ public class CallBackTest {
         form.$("[data-test-id=city] input").setValue("");
         form.$("[data-test-id=date] input").sendKeys(Keys.CONTROL + "a");
         form.$("[data-test-id=date] input").sendKeys(Keys.BACK_SPACE);
-        form.$("[data-test-id=date] input").setValue(meetingDate());
+        form.$("[data-test-id=date] input").setValue(planningDate);
         form.$("[data-test-id=name] input").setValue("Иван Иванов");
         form.$("[data-test-id=phone] input").setValue("+79991234567");
         form.$("[data-test-id=agreement]").click();
@@ -76,7 +79,7 @@ public class CallBackTest {
         form.$("[data-test-id=city] input").setValue("Клин");
         form.$("[data-test-id=date] input").sendKeys(Keys.CONTROL + "a");
         form.$("[data-test-id=date] input").sendKeys(Keys.BACK_SPACE);
-        form.$("[data-test-id=date] input").setValue(meetingDate());
+        form.$("[data-test-id=date] input").setValue(planningDate);
         form.$("[data-test-id=name] input").setValue("Иван Иванов");
         form.$("[data-test-id=phone] input").setValue("+79991234567");
         form.$("[data-test-id=agreement]").click();
@@ -114,7 +117,7 @@ public class CallBackTest {
         form.$("[data-test-id=city] input").setValue("Москва");
         form.$("[data-test-id=date] input").sendKeys(Keys.CONTROL + "a");
         form.$("[data-test-id=date] input").sendKeys(Keys.BACK_SPACE);
-        form.$("[data-test-id=date] input").setValue(meetingDate());
+        form.$("[data-test-id=date] input").setValue(planningDate);
         form.$("[data-test-id=name] input").setValue("");
         form.$("[data-test-id=phone] input").setValue("+79991234567");
         form.$("[data-test-id=agreement]").click();
@@ -127,7 +130,7 @@ public class CallBackTest {
         form.$("[data-test-id=city] input").setValue("Москва");
         form.$("[data-test-id=date] input").sendKeys(Keys.CONTROL + "a");
         form.$("[data-test-id=date] input").sendKeys(Keys.BACK_SPACE);
-        form.$("[data-test-id=date] input").setValue(meetingDate());
+        form.$("[data-test-id=date] input").setValue(planningDate);
         form.$("[data-test-id=name] input").setValue("Ivanov");
         form.$("[data-test-id=phone] input").setValue("+79991234567");
         form.$("[data-test-id=agreement]").click();
@@ -140,7 +143,7 @@ public class CallBackTest {
         form.$("[data-test-id=city] input").setValue("Москва");
         form.$("[data-test-id=date] input").sendKeys(Keys.CONTROL + "a");
         form.$("[data-test-id=date] input").sendKeys(Keys.BACK_SPACE);
-        form.$("[data-test-id=date] input").setValue(meetingDate());
+        form.$("[data-test-id=date] input").setValue(planningDate);
         form.$("[data-test-id=name] input").setValue("иван% иванов");
         form.$("[data-test-id=phone] input").setValue("+79991234567");
         form.$("[data-test-id=agreement]").click();
@@ -153,7 +156,7 @@ public class CallBackTest {
         form.$("[data-test-id=city] input").setValue("Москва");
         form.$("[data-test-id=date] input").sendKeys(Keys.CONTROL + "a");
         form.$("[data-test-id=date] input").sendKeys(Keys.BACK_SPACE);
-        form.$("[data-test-id=date] input").setValue(meetingDate());
+        form.$("[data-test-id=date] input").setValue(planningDate);
         form.$("[data-test-id=name] input").setValue("Иван Иванов");
         form.$("[data-test-id=phone] input").setValue("");
         form.$("[data-test-id=agreement]").click();
@@ -166,7 +169,7 @@ public class CallBackTest {
         form.$("[data-test-id=city] input").setValue("Москва");
         form.$("[data-test-id=date] input").sendKeys(Keys.CONTROL + "a");
         form.$("[data-test-id=date] input").sendKeys(Keys.BACK_SPACE);
-        form.$("[data-test-id=date] input").setValue(meetingDate());
+        form.$("[data-test-id=date] input").setValue(planningDate);
         form.$("[data-test-id=name] input").setValue("Иван Иванов");
         form.$("[data-test-id=phone] input").setValue("+7(111)1234567");
         form.$("[data-test-id=agreement]").click();
@@ -179,7 +182,7 @@ public class CallBackTest {
         form.$("[data-test-id=city] input").setValue("Москва");
         form.$("[data-test-id=date] input").sendKeys(Keys.CONTROL + "a");
         form.$("[data-test-id=date] input").sendKeys(Keys.BACK_SPACE);
-        form.$("[data-test-id=date] input").setValue(meetingDate());
+        form.$("[data-test-id=date] input").setValue(planningDate);
         form.$("[data-test-id=name] input").setValue("Иван Иванов");
         form.$("[data-test-id=phone] input").setValue("+71111234567");
         $$("button").find(exactText("Забронировать")).click();
